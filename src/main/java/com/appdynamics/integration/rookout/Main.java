@@ -1,20 +1,25 @@
+/**
+ * Copyright 2018. AppDynamics LLC and its affiliates.
+ * All Rights Reserved.
+ * This is unpublished proprietary source code of AppDynamics LLC and its affiliates.
+ * The copyright notice above does not evidence any actual or intended publication of such source code.
+ *
+ * Main for Rookout integration
+ * @author aleftik
+ * @version 1.0
+ */
 package com.appdynamics.integration.rookout;
-
-import org.eclipse.jetty.util.Jetty;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
 
+
 public class Main {
     private static final String DEFAULT_CONFIG_FILE_NAME="config.properties";
     Properties props = new Properties();
     public static void main(String [] args) {
-        if (args.length < 1) {
-            System.err.println("Do not have enough information to context missing args");
-            System.exit(-1);
-        }
         Main m = new Main();
         m. startup();
     }
@@ -25,7 +30,14 @@ public class Main {
     }
 
     private void bootstrapServer() {
-        JettyWebServer jetty = new JettyWebServer();
+        JettyWebServer jetty = new JettyWebServer(props);
+        Thread launchingThread = new Thread(jetty);
+        launchingThread.start();
+        try {
+            launchingThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private void loadConfiguration() {
